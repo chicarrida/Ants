@@ -11,13 +11,14 @@ void setup() {
   size(700, 700);
   rotationAngle = -PI/2;
   ants = new ArrayList<Ant>(); 
-  ants.add(new Ant(new PVector(300, 480)));
-  ants.add(new Ant(new PVector(300, 220)));
-  ants.add(new Ant(new PVector(400, 300)));
+  ants.add(new Ant(new PVector(150, 480)));
+  ants.add(new Ant(new PVector(350, 220)));
+  ants.add(new Ant(new PVector(250, 300)));
   
   gradienten = new ArrayList<Gradient>();
   background(0);
   //noLoop();
+ // frameRate(5);
 }
 
 void draw() {
@@ -25,11 +26,11 @@ void draw() {
   for(Gradient g: gradienten)
     g.drawGradient();
   paths.draw();
-  for(Ant ant: ants)
+  for(Ant ant: ants){
     paths.addRectangle(ant.update());
-  for(Ant ant: ants)
     ant.render();
-  
+    ant.edges();
+  }
 }
 
 void mousePressed() {

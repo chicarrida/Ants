@@ -27,6 +27,8 @@ private void setUp(){
     sensorPositions = new ArrayList<PVector>();
     sensorPositions.add(new PVector(15,-7));
     sensorPositions.add(new PVector(15,7));
+    //sensorPositions.add(new PVector(-7, 15));
+    //sensorPositions.add(new PVector(7,15));
     globalSensorPositions = new ArrayList<PVector>();
     goHome = false;
     home = new PVector();
@@ -66,19 +68,26 @@ private void setUp(){
   
   public void setRotationAngle(float theta){
    rotationAngle = theta;
+   //println("winkel "+rotationAngle);
    dir.x = 1;
    dir.y = 0;
    rotate2D(dir, theta); 
   }
   
   Rectangle update(){
-    //println(state);
+   // println(state);
     float lRedd = 0;
      float rRedd = 0;
+     
+     float lGreen = 0;
+     float rGreen = 0;
      //int diff = 0;
      if(globalSensorPositions.size() > 0 && state != State.GOING_HOME){
        lRedd = red(get((int)globalSensorPositions.get(0).x,(int)globalSensorPositions.get(0).y));
        rRedd = red(get((int)globalSensorPositions.get(1).x,(int)globalSensorPositions.get(1).y));
+       
+        lGreen = green(get((int)globalSensorPositions.get(0).x,(int)globalSensorPositions.get(0).y));
+       rGreen = green(get((int)globalSensorPositions.get(1).x,(int)globalSensorPositions.get(1).y));
        //diff = (int)(Math.abs(lRedd-rRedd));
        if(lRedd > rRedd){
          rotationAngle -= 0.05;
@@ -91,9 +100,14 @@ private void setUp(){
          if(rRedd > 235){
            state = State.GOING_HOME;
            //println("going home "+home.x+" "+home.y);
-         }
-       }else{
-        rotationAngle += random(-0.005, 0.005); //perlinnoise hier hin!
+         }else if(lGreen > rGreen){
+         rotationAngle -= 0.05;       
+       }else if (rGreen > lGreen){
+         rotationAngle += 0.05;
+       }
+        }else{
+ 
+        rotationAngle += random(-0.05, 0.05); //perlinnoise hier hin!
        }
        //println(lRedd+" : "+rRedd);
        setRotationAngle(rotationAngle);
@@ -107,6 +121,7 @@ private void setUp(){
        //println(dir.x+" "+dir.y);  
        //das hier ist sehr wichtig :-)
        rotationAngle = atan2(dir.y, dir.x);
+       //setRotationAngle(rotationAngle);
        if(location.x < home.x +5 && location.y < home.y+5){
          //setRotationAngle(-PI);
          state = State.SEARCHING;
@@ -118,12 +133,11 @@ private void setUp(){
        dir.y = -home.y+random(-10, 10);
         //println(dir.y); 
      }
-     edges();     
      velocity.add(dir);
      velocity.limit(1);   
      location.add(velocity);   
      drawVector(dir, location.x, location.y, 50);
-     //drawVector(velocity, location.x, location.y, 50);
+     drawVector(velocity, location.x, location.y, 50);
      return new Rectangle(location.x, location.y, rotationAngle);
    }  
   
@@ -144,6 +158,25 @@ private void calculateSensorPositionsToBaseCoordinateSystem(){
     v.y = xTemp*sin(theta) + v.y*cos(theta);
   }
    
+void checkEdges() {
+
+    if (location.x > width) {
+      location.x = width-5;
+      velocity.x *= -1;
+      dir.x *= -1;
+    } else if (location.x < 0) {
+      location.x = 0+5;
+      velocity.x *= -1;
+      dir.x *=-1;
+    }
+      if (location.y > height) {
+      velocity.y *= -1;
+      location.y = height;
+    }
+
+}
+
+
  
   void edges(){
     if (location.x > width || location.x < 0){
@@ -170,6 +203,8 @@ private void calculateSensorPositionsToBaseCoordinateSystem(){
   void render(){             
     pushMatrix();
     translate(location.x, location.y);
+    //println("drawAngle "+rotationAngle);
+    println();
     rotate(rotationAngle);
     if(state == State.GOING_HOME)
       fill(0,125,0);
@@ -179,7 +214,10 @@ private void calculateSensorPositionsToBaseCoordinateSystem(){
     calculateSensorPositionsToBaseCoordinateSystem();
     //triangle(-10, 10, -10, -10, 15, 0);
      ellipseMode(RADIUS);
-    ellipse(-8,0, 8, 6);
+  //  ellipse(0,0, 6, 8);
+   
+   // ellipse(0,10, 4, 6);
+      ellipse(-8,0, 8, 6);
     ellipse(3,0, 6, 4);
     //fill(255,0,0);
     for(PVector pos: sensorPositions)
