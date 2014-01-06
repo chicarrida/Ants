@@ -11,9 +11,9 @@ void setup() {
   size(700, 700);
   rotationAngle = -PI/2;
   ants = new ArrayList<Ant>(); 
-  ants.add(new Ant(new PVector(150, 480)));
-  ants.add(new Ant(new PVector(350, 220)));
-  ants.add(new Ant(new PVector(250, 300)));
+  ants.add(new Ant(new PVector(450, 450)));
+  //ants.add(new Ant(new PVector(350, 220)));
+  //ants.add(new Ant(new PVector(250, 300)));
   
   gradienten = new ArrayList<Gradient>();
   background(0);
@@ -29,7 +29,8 @@ void draw() {
   for(Ant ant: ants){
     paths.addRectangle(ant.update());
     ant.render();
-    ant.edges();
+    //ant.edges();
+    ant.boundaries();
   }
 }
 

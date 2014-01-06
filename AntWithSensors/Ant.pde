@@ -4,11 +4,13 @@ class Ant{
   PVector dir;
   PVector home;
   float rotationAngle;  
-  boolean goHome;
   ArrayList<PVector> sensorPositions;
   ArrayList<PVector> globalSensorPositions; 
   State state;
-
+  color c;
+  //distance to boundaries of window
+  int d = 20;
+  
   Ant(){
    location = new PVector(width/2, height/2);
    setUp();
@@ -19,7 +21,8 @@ class Ant{
     setUp();
   }
 
-private void setUp(){    
+private void setUp(){  
+    c = color(0,125.0);  
     velocity = new PVector(0.0,-0.5);
     dir = new PVector(1, 0);
     rotationAngle = 0;  
@@ -30,8 +33,7 @@ private void setUp(){
     //sensorPositions.add(new PVector(-7, 15));
     //sensorPositions.add(new PVector(7,15));
     globalSensorPositions = new ArrayList<PVector>();
-    goHome = false;
-    home = new PVector();
+    home = new PVector(100,100);
     state = State.SEARCHING;
   }
   
@@ -73,7 +75,7 @@ private void setUp(){
    dir.y = 0;
    rotate2D(dir, theta); 
   }
-  
+    
   Rectangle update(){
    // println(state);
     float lRedd = 0;
@@ -92,6 +94,7 @@ private void setUp(){
        if(lRedd > rRedd){
          rotationAngle -= 0.05;
          if(lRedd > 235){
+           c = color(0,255,0);
            state = State.GOING_HOME;
            //println("going home "+home.x+" "+home.y);
          }
@@ -123,9 +126,9 @@ private void setUp(){
        rotationAngle = atan2(dir.y, dir.x);
        //setRotationAngle(rotationAngle);
        if(location.x < home.x +5 && location.y < home.y+5){
-         //setRotationAngle(-PI);
+         setRotationAngle(-rotationAngle);
          state = State.SEARCHING;
-         //println("searching...");
+         println("got home");
        }
      }else{
       //FIXME mel state SEARCHING implementieren...
@@ -134,7 +137,7 @@ private void setUp(){
         //println(dir.y); 
      }
      velocity.add(dir);
-     velocity.limit(1);   
+     velocity.limit(1);
      location.add(velocity);   
      drawVector(dir, location.x, location.y, 50);
      drawVector(velocity, location.x, location.y, 50);
@@ -157,59 +160,42 @@ private void calculateSensorPositionsToBaseCoordinateSystem(){
     v.x = v.x*cos(theta) - v.y*sin(theta);
     v.y = xTemp*sin(theta) + v.y*cos(theta);
   }
-   
-void checkEdges() {
 
-    if (location.x > width) {
-      location.x = width-5;
-      velocity.x *= -1;
-      dir.x *= -1;
-    } else if (location.x < 0) {
-      location.x = 0+5;
-      velocity.x *= -1;
-      dir.x *=-1;
-    }
-      if (location.y > height) {
-      velocity.y *= -1;
-      location.y = height;
-    }
+ void boundaries() {
 
-}
+    PVector desired = null;
 
+    if (location.x < d) {
+      desired = new PVector(3, velocity.y);
+    } 
+    else if (location.x > width -d) {
+      desired = new PVector(-3, velocity.y);
+    } 
 
- 
-  void edges(){
-    if (location.x > width || location.x < 0){
-      float theta;
-       if(dir.y < 0){
-          theta = PVector.angleBetween(dir, new PVector(0, -1));          
-       }else{
-         theta = PVector.angleBetween(dir, new PVector(0, 1));
-       }
-       setRotationAngle(theta);
+    if (location.y < d) {
+      desired = new PVector(velocity.x, 3);
+    } 
+    else if (location.y > height-d) {
+      desired = new PVector(velocity.x, -3);
+    } 
+
+    if (desired != null) {   
+      desired.normalize();
+      desired.mult(3);
+      PVector steer = PVector.sub(desired, velocity);
+      steer.limit(0.2);
+      setRotationAngle(desired.heading());    
     }
-    else if(location.y > height || location.y < 0){
-           float theta;
-       if(dir.x < 0){
-          theta = PVector.angleBetween(dir, new PVector(-1, 0));          
-       }else{
-         theta = PVector.angleBetween(dir, new PVector(1, 0));
-       }
-       //println(dir.x+" "+dir.y);
-       setRotationAngle(theta);
-    }
-  }
+    
+  }   
   
   void render(){             
     pushMatrix();
     translate(location.x, location.y);
     //println("drawAngle "+rotationAngle);
     println();
-    rotate(rotationAngle);
-    if(state == State.GOING_HOME)
-      fill(0,125,0);
-    else
-      fill(125);
+    rotate(velocity.heading());    
+    fill(c);    
     stroke(155);
     calculateSensorPositionsToBaseCoordinateSystem();
     //triangle(-10, 10, -10, -10, 15, 0);
