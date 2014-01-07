@@ -46,7 +46,7 @@ public class Rectangle{
      rotate(angle);
      rectMode(CENTER);
      rect(0, 0, with, heiht);  
-     strength -=0.05;
+     strength -=0.1;
      popMatrix();
      //fill(0,255,0, strength);
      //ellipse(pos.x, pos.y, 2, 2);
