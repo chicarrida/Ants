@@ -54,6 +54,13 @@ void mousePressed() {
   // for(Gradient g: gradienten)
   //  g.drawGradient();
 }
+
+void keyPressed(){
+  if(key == 'r' || key == 'R'){
+   gradient = null;
+    bg = null; 
+  }
+}
  //FIXME mel add a reset function to reset bg to black
 
 
