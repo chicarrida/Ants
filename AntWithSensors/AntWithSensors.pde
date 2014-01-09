@@ -35,6 +35,8 @@ void draw() {
     bg = get();
     gradient = null; 
   }
+  fill(120,120,220);
+  ellipse(width/2, height/2, 10, 10);
   //for(Gradient g: gradienten)
     //g.drawGradient();
   paths.draw();
@@ -62,5 +64,3 @@ void keyPressed(){
   }
 }
  //FIXME mel add a reset function to reset bg to black
-
-

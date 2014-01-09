@@ -89,23 +89,21 @@ private void setUp(){
     if(globalSensorPositions.size() > 0 && state != State.GOING_HOME){
       lRedd = red(get((int)globalSensorPositions.get(0).x,(int)globalSensorPositions.get(0).y));
       rRedd = red(get((int)globalSensorPositions.get(1).x,(int)globalSensorPositions.get(1).y));
-      //println(lRedd+" "+rRedd); 
       lGreen = green(get((int)globalSensorPositions.get(0).x,(int)globalSensorPositions.get(0).y));
       rGreen = green(get((int)globalSensorPositions.get(1).x,(int)globalSensorPositions.get(1).y));
-       //println(lGreen+" "+rGreen);
       if(lRedd > rRedd){
-        rotationAngle -= 0.05;
-        if(lRedd > 235){
-         // println("lredd "+lRedd);
+        rotationAngle -= random(0.05, 0.08);
+        if(lRedd > 235){         
           c = color(0,255,0);
-          state = State.GOING_HOME;       
+          state = State.GOING_HOME;  
+         println("going home");     
         }
       }else if (rRedd > lRedd){
-        rotationAngle += 0.05;
+        rotationAngle += random(0.05, 0.08);
         if(rRedd > 235){
            c = color(0,255,0);
-          state = State.GOING_HOME;
-          //println("rredd"+rRedd);
+            state = State.GOING_HOME;
+           println("going home");     
         }
       }else if(lGreen > rGreen){
         rotationAngle -= 0.05;    
@@ -118,13 +116,13 @@ private void setUp(){
       setRotationAngle(rotationAngle);
     }
     else if(state == State.GOING_HOME){    
-      dir.x = home.x;
+      dir.x = home.x; //<>//
       dir.y = home.y;       
       dir.sub(location);                  
       //dir.limit(1); 
       rotationAngle = atan2(dir.y, dir.x);
       setRotationAngle(rotationAngle);
-      if(location.x < home.x +5 && location.y < home.y+5){
+      if(location.x < home.x +5 && location.y < home.y+5 && location.x > home.x -5 && location.y > home.y-5){
         setRotationAngle(-rotationAngle);
         state = State.SEARCHING;
         c = color(127, 127, 127);
