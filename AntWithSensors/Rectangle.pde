@@ -5,38 +5,18 @@ public class Rectangle{
  private float strength;
  private float angle;
 
-  Rectangle( PVector _pos, int _w, int _h){
-    pos = _pos; 
-    with = _w;
-    heiht = _h;
-    strength = 50;
-    angle = 0;    
-  }
-  
-  Rectangle(float x, float y, float rot){
+
+  Rectangle(float x, float y, float rot, State status){
    pos = new PVector(x, y);
-   angle = rot; 
-   strength = 50; 
+   angle = rot;
+  if(status == State.SEARCHING) 
+   strength = 30;
+  else 
+    strength = 70; 
    with = 5; 
    heiht = 10;
   }
   
-  Rectangle(PVector _pos, float rotationAngle){
-   pos = _pos;
-   angle = rotationAngle;
-   strength = 50; 
-   with = 5; 
-   heiht = 10; 
-  }
- 
-   Rectangle( final float x, final float y, int _w, int _h){
-    pos = new PVector(x, y); 
-    with = _w;
-    heiht = _h;
-    strength = 0;
-    angle = 0;    
-  }  
-   
    public void draw(){
      noStroke();
      fill(0, 220, 0, strength);

@@ -93,22 +93,24 @@ private void setUp(){
       rGreen = green(get((int)globalSensorPositions.get(1).x,(int)globalSensorPositions.get(1).y));
       if(lRedd > rRedd){
         rotationAngle -= random(0.05, 0.08);
-        if(lRedd > 235){         
+        if(lRedd > 150){         
           c = color(0,255,0);
           state = State.GOING_HOME;  
-         println("going home");     
+         //println("going home");     
         }
       }else if (rRedd > lRedd){
         rotationAngle += random(0.05, 0.08);
-        if(rRedd > 235){
+        if(rRedd > 150){
            c = color(0,255,0);
             state = State.GOING_HOME;
-           println("going home");     
+           //println("going home");     
         }
-      }else if(lGreen > rGreen){
-        rotationAngle -= 0.05;    
-      }else if (rGreen > lGreen){
+      }else if(lGreen > rGreen && lGreen > 50){
+        rotationAngle -= 0.05;
+        //println(lGreen);    
+      }else if (rGreen > lGreen  && rGreen > 50){
         rotationAngle += 0.05;
+        //println(rGreen);
       }
       else{
        rotationAngle += random(-0.05, 0.05); //perlinnoise hier hin!
@@ -116,14 +118,14 @@ private void setUp(){
       setRotationAngle(rotationAngle);
     }
     else if(state == State.GOING_HOME){    
-      dir.x = home.x; //<>//
+      dir.x = home.x;
       dir.y = home.y;       
       dir.sub(location);                  
       //dir.limit(1); 
       rotationAngle = atan2(dir.y, dir.x);
       setRotationAngle(rotationAngle);
       if(location.x < home.x +5 && location.y < home.y+5 && location.x > home.x -5 && location.y > home.y-5){
-        setRotationAngle(-rotationAngle);
+        setRotationAngle(rotationAngle +PI);
         state = State.SEARCHING;
         c = color(127, 127, 127);
       }
@@ -134,7 +136,7 @@ private void setUp(){
     //drawVector(dir, location.x, location.y, 50);
     drawVector(velocity, location.x, location.y, 50);
    // println(velocity.x+" "+velocity.y+ " "+velocity.mag());
-    return new Rectangle(location.x, location.y, rotationAngle);
+    return new Rectangle(location.x, location.y, rotationAngle, state);
   }  
   
 private void calculateSensorPositionsToBaseCoordinateSystem(){
