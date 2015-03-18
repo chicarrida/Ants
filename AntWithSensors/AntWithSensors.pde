@@ -21,79 +21,87 @@ void setup() {
   ants.add(new Ant(PI/2));
   ants.add(new Ant(PI/3));
   ants.add(new Ant(PI/4));
+
+
   targets = new ArrayList<PVector>();
   //gradienten = new ArrayList<Gradient>();
   background(0);
- // frameRate(5);
-  counter = 255; 
+  // frameRate(5);
+  counter = 255;
 }
 
-void draw() {
-  //float start = second();
-  if(gradient == null && bg == null){
-    background(0);
-    bg = get();
+void draw() {  
+  if (gradient == null && bg == null) {
+    drawBasicBackground();
+  } else if (bg != null && gradient == null) {    
+    drawBackground();
+  } else {    
+    addGradientAndDrawBackground();
   }
-  else if(bg != null && gradient == null){
-   //background(bg);
-   background(0);
-   tint(255, counter);
-   counter -= 0.2;
-   image(bg, 0, 0); 
-   if(counter <= 45){
-     counter = 255;
-     targets.clear();
-     bg = null;
-//    println("targets cleared"); 
-   }
-   //println(counter);
-  
-  }
-  else {
-    //background(bg);
-    background(0);
-    tint(255, counter);
-    counter = 255;
-    image(bg, 0, 0);
-    gradient.drawGradient();
-    //println(counter);
-    bg = get();
-    gradient = null; 
-  }
-  
-  fill(255, 0,0);
-  noStroke();
-  for(PVector target: targets){
-    ellipse(target.x, target.y, 10, 10);
-  }
-  fill(120,120,220);
-  ellipse(width/2, height/2, 10, 10);
-  //for(Gradient g: gradienten)
-    //g.drawGradient();
+  drawTargets();
+  drawHome();
   paths.draw();
-  for(Ant ant: ants){
-    paths.addRectangle(ant.update());
-    ant.render();
-    ant.boundaries();
-  }
-  //println(second()-start);
+  processAnts();
 }
 
-void mousePressed() {
-  //if(gradienten.size() > 5)
-  //  gradienten.remove(0);
-  //  gradienten.add(new Gradient(mouseX, mouseY, (int)(120 + random( 50)), true));
+void mousePressed() {  
   gradient = new Gradient(mouseX, mouseY, (int)(120 + random( 50)), false);
   targets.add(new PVector(mouseX, mouseY));
-  // for(Gradient g: gradienten)
-  //  g.drawGradient();
 }
 
-void keyPressed(){
-  if(key == 'r' || key == 'R'){
-   gradient = null;
+void keyPressed() {
+  if (key == 'r' || key == 'R') {
+    gradient = null;
     bg = null; 
     targets.clear();
   }
 }
- //FIXME mel add a reset function to reset bg to black
+
+
+private void drawBasicBackground() {
+  background(0);
+  bg = get();
+}
+
+private void drawBackground() {
+  background(0);
+  tint(255, counter);
+  counter -= 0.2;
+  image(bg, 0, 0); 
+  if (counter <= 45) {
+    counter = 255;
+    targets.clear();
+    bg = null;
+  }
+}
+
+private void  addGradientAndDrawBackground() {
+  background(0);
+  tint(255, counter);
+  counter = 255;
+  image(bg, 0, 0);
+  gradient.drawGradient();
+  bg = get();
+  gradient = null;
+}
+
+private void drawTargets() {
+  fill(255, 0, 0, 180);
+  noStroke();
+  for (PVector target : targets) {
+    ellipse(target.x, target.y, 5, 5);
+  }
+}
+
+private void drawHome() {
+  fill(120, 120, 220);
+  ellipse(width/2, height/2, 10, 10);
+}
+
+private void processAnts() {
+  for (Ant ant : ants) {
+    paths.addRectangle(ant.update());
+    ant.render();
+    ant.boundaries();
+  }
+}
