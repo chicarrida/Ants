@@ -8,6 +8,10 @@ class Ant {
   ArrayList<PVector> globalSensorPositions; 
   State state;
   color c;
+  float lRedd = 0;//these are not Global my dear!
+  float rRedd = 0;
+  float lGreen = 0;
+  float rGreen = 0;
   //distance to boundaries of window
   int d = 20;
   final int RED_THRESHOLD = 150;
@@ -47,11 +51,7 @@ class Ant {
     location.y = home.y;
   }
 
-  Rectangle update() {   
-    float lRedd = 0;//these are not Global my dear!
-    float rRedd = 0;
-    float lGreen = 0;
-    float rGreen = 0;
+  Rectangle update() {       
 
     if (globalSensorPositions.size() > 0 && state == State.SEARCHING) {
       search();
